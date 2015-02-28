@@ -2,8 +2,11 @@ package view;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.swing.JOptionPane;
@@ -15,6 +18,31 @@ import model.XMatrix;
 import util.AWTUtil;
 
 public class Coordinator {
+
+	Map<Object,PropertyChangeSupport> supports = new HashMap<Object,PropertyChangeSupport>();
+
+	public void addPropertyChangeListener(Object source, PropertyChangeListener listener) {
+		PropertyChangeSupport support = supports.get(source);
+		if (support == null) {
+			support = new PropertyChangeSupport(source);
+			supports.put(source, support);
+		}
+		support.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(Object source, PropertyChangeListener listener) {
+		PropertyChangeSupport support = supports.get(source);
+		if (support != null) {
+			support.removePropertyChangeListener(listener);
+		}
+	}
+	
+	protected void firePropertyChange(Object source, String propertyName, Object oldValue, Object newValue) {
+		PropertyChangeSupport support = supports.get(source);
+		if (support != null) {
+			support.firePropertyChange(propertyName, oldValue, newValue);
+		}
+	}
 
 	static class Pack {
 
@@ -50,6 +78,7 @@ public class Coordinator {
 				Runnable runnable = new Runnable() {
 					@Override
 					public void run() {
+						firePropertyChange(canvas, AppConstant.SearchStarted, null, null);
 						canvas.setEditable(false);
 						evaluator.setEnabled(true);
 						matrix.setStart(matrix.getValue(start.getRow(), start.getCol()));
@@ -58,6 +87,7 @@ public class Coordinator {
 						algorithm.searchPath(matrix.getStart(), matrix.getEnd());
 						canvas.repaint();
 						canvas.setEditable(true);
+						firePropertyChange(canvas, AppConstant.SearchCompleted, null, null);
 					}
 				};
 				Thread thread = new Thread(runnable);

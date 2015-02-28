@@ -11,11 +11,11 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.LayoutFocusTraversalPolicy;
 
 import util.InputValidationDocumentListener;
@@ -38,10 +38,9 @@ public class ControlPanel extends JPanel {
 	private final JButton    	applyCellSizeButton    		= new JButton("Apply");
 	private final JButton    	applyAnimationMsButton 		= new JButton("Apply");
 	private final ButtonGroup 	modeButtonGroup      		= new ButtonGroup();
-	private final ButtonGroup 	painterButtonGroup 		    = new ButtonGroup();
 	private final JPanel        modesPanel                  = new JPanel();
+	private final JPanel 		mapGeneratingPanel 			= new JPanel();
 	private final JPanel        mapSettingPanel             = new JPanel();
-	private final JPanel        mapEditingPanel             = new JPanel();
 	private final JPanel        pathSearchPanel             = new JPanel();
 
 	static class TextFiledDocumentListener extends InputValidationDocumentListener {
@@ -103,9 +102,6 @@ public class ControlPanel extends JPanel {
 		/*-------------------------------------------*
 		 *               map editing                 *
 		 *-------------------------------------------*/
-		JPanel mapGeneratingPanel = new JPanel();
-		mapGeneratingPanel.setLayout(new GridLayout(0, 1, 2, 2));
-
 		obstaclePercentTextField.setText(Integer.toString(parameters.getObstaclePercent()));
 		TextFiledDocumentListener percentTextFieldDocListener = new TextFiledDocumentListener() {
 
@@ -136,32 +132,6 @@ public class ControlPanel extends JPanel {
 			}
 		});
 		
-		mapGeneratingPanel.add(new JLabel("Obstacle [%]:"));
-		mapGeneratingPanel.add(obstaclePercentTextField);
-		mapGeneratingPanel.add(generateMapButton);
-		
-
-		JPanel customMapPanel = new JPanel();
-		customMapPanel.setLayout(new GridLayout(0, 1, 2, 2));
-		
-		ActionListener toggleButtonListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent aE) {
-				parameters.setPainter(Painter.getValue(((JToggleButton)aE.getSource()).getText()));
-			}
-		};
-		Painter[] painters = Painter.values();
-		for (Painter painter : painters) {
-			JToggleButton button = new JToggleButton(painter.toString());
-			button.setFocusPainted(false);
-			button.addActionListener(toggleButtonListener);
-			button.setSelected(painter.equals(parameters.getPainter()));
-			button.setToolTipText(painter.description);
-			painterButtonGroup.add(button);
-			customMapPanel.add(button);
-		}
-		
 		clearMapButton.setFocusPainted(false);
 		clearMapButton.addActionListener(new ActionListener() {
 			
@@ -170,13 +140,27 @@ public class ControlPanel extends JPanel {
 				firePropertyChange(AppConstant.ClearMapRequested, null, null); 
 			}
 		});
-		customMapPanel.add(clearMapButton);
 		
-		mapEditingPanel.setLayout(new BoxLayout(mapEditingPanel, BoxLayout.Y_AXIS));
-		mapEditingPanel.add(mapGeneratingPanel);
-		mapEditingPanel.add(Box.createVerticalStrut(8));
-		mapEditingPanel.add(customMapPanel);
-
+		final JComboBox<Painter> painterComboBox = new JComboBox<Painter>();
+		Painter[] painters = Painter.values();
+		for (Painter painter : painters) {
+			painterComboBox.addItem(painter);
+		}
+		painterComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				parameters.setPainter((Painter) painterComboBox.getSelectedItem());
+			}
+		});
+		
+		mapGeneratingPanel.setLayout(new GridLayout(0, 1, 2, 2));
+		mapGeneratingPanel.add(new JLabel("Obstacle [%]:"));
+		mapGeneratingPanel.add(obstaclePercentTextField);
+		mapGeneratingPanel.add(generateMapButton);
+		mapGeneratingPanel.add(clearMapButton);
+		mapGeneratingPanel.add(new JLabel("Toolbox:"));
+		mapGeneratingPanel.add(painterComboBox);
+		
 		/*-------------------------------------------*
 		 *                path search                *
 		 *-------------------------------------------*/
@@ -277,17 +261,17 @@ public class ControlPanel extends JPanel {
 		setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
 		add(modesPanel);
 		add(Box.createVerticalStrut(8));
-		add(mapEditingPanel);
+		add(mapGeneratingPanel);
 		add(pathSearchPanel);
 		add(mapSettingPanel);
 		add(Box.createVerticalStrut(2000));
 		
 		int preferedWidth = modesPanel.getPreferredSize().width;
-		preferedWidth = Math.max(preferedWidth, mapEditingPanel.getPreferredSize().width);
+		preferedWidth = Math.max(preferedWidth, mapGeneratingPanel.getPreferredSize().width);
 		preferedWidth = Math.max(preferedWidth, pathSearchPanel.getPreferredSize().width);
 		preferedWidth = Math.max(preferedWidth, mapSettingPanel.getPreferredSize().width);
 		modesPanel.setPreferredSize(new Dimension(preferedWidth, modesPanel.getPreferredSize().height));
-		mapEditingPanel.setPreferredSize(new Dimension(preferedWidth, mapEditingPanel.getPreferredSize().height));
+		mapGeneratingPanel.setPreferredSize(new Dimension(preferedWidth, mapGeneratingPanel.getPreferredSize().height));
 		pathSearchPanel.setPreferredSize(new Dimension(preferedWidth, pathSearchPanel.getPreferredSize().height));
 		mapSettingPanel.setPreferredSize(new Dimension(preferedWidth, mapSettingPanel.getPreferredSize().height));
 		
@@ -295,7 +279,7 @@ public class ControlPanel extends JPanel {
 	}
 	
 	void updateVisibility() {
-		mapEditingPanel.setVisible(parameters.getMode() == Mode.MAP_EDITING_MODE);
+		mapGeneratingPanel.setVisible(parameters.getMode() == Mode.MAP_EDITING_MODE);
 		pathSearchPanel.setVisible(parameters.getMode() == Mode.PATH_SEARCH_MODE);
 		mapSettingPanel.setVisible(parameters.getMode() == Mode.MAP_SETTING_MODE);
 	}

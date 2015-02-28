@@ -69,7 +69,7 @@ public class Canvas extends JComponent {
 		case MAP_EDITING_MODE:
 			switch (parameters.getPainter()) {
 			case BLOCK_OBSTACLE:
-			case CLEAR_BLOCK:
+			case BLOCK_ERASER:
 				if (clickPoint != null && cursorPoint != null) {
 					Point pt1 = clickPoint;
 					Point pt2 = cursorPoint;
@@ -177,7 +177,7 @@ public class Canvas extends JComponent {
 
 		// take each time one line segment, start from one end, toward the other end,
 		// take a step of half the cell side length, the square where the step
-		// falls in is unwalkable.
+		// falls in is not walkable.
 		double x1, y1, x2, y2;
 		x1 = points.get(0).getX();
 		y1 = points.get(0).getY();
@@ -265,7 +265,7 @@ public class Canvas extends JComponent {
 					setEnabled(points, false);
 					break;
 
-				case CLEAR_CELL:
+				case CELL_ERASER:
 					setEnabled(points, true);
 					break;
 				default:
@@ -306,7 +306,7 @@ public class Canvas extends JComponent {
 					}
 					break;
 
-				case CLEAR_CELL:
+				case CELL_ERASER:
 					if (node != null) {
 						node.setEnabled(true);
 					}
@@ -328,7 +328,7 @@ public class Canvas extends JComponent {
 					setEnabled(points, false);
 					break;
 
-				case CLEAR_BLOCK:
+				case BLOCK_ERASER:
 					pt1 = clickPoint;
 					pt2 = cursorPoint;
 					x = (pt1.x < pt2.x) ? pt1.x : pt2.x;

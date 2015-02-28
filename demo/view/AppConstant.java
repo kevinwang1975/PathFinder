@@ -14,6 +14,9 @@ public class AppConstant {
 
 	public final static String StartRequested 	        = "Start Requested";
 	public final static String StopRequested 			= "Stop Requested";
+	
+	public final static String SearchStarted 			= "Search Started";
+	public final static String SearchCompleted 			= "Search Completed";
 
 	public final static String ClearMapRequested 		= "Clear Map Requested";
 	public final static String GenerateMapRequested		= "Generate Map Requested";
@@ -25,8 +28,8 @@ public class AppConstant {
 		DESTINATION   ("Destination", 		"Select a cell as the destination for path search"),
 		CELL_OBSTACLE ("Cell Obstacle",		"Select cells as obstacles"),
 		BLOCK_OBSTACLE("Block Obstacle",	"Select a block of cells as obstacles"),
-		CLEAR_CELL    ("Clear Cell", 		"Clear cell obstacles"),
-		CLEAR_BLOCK   ("Clear Block", 		"Clear a block of cell obstacles");
+		CELL_ERASER   ("Cell Eraser", 	    "Clear cell obstacles"),
+		BLOCK_ERASER  ("Block Eraser", 		"Clear a block of cell obstacles");
 
 		String name;
 		String description;
