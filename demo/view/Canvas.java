@@ -111,7 +111,6 @@ public class Canvas extends JComponent {
 		int cellsize = parameters.getCellSize();
 		int rows = (panelHeight - MARGIN*2)/cellsize;
 		int cols = (panelWidth - MARGIN*2)/cellsize;
-		if (rows == matrix.getRows() && cols == matrix.getColumns()) return;
 		left = (panelWidth - cellsize*cols)/2;
 		top = (panelHeight - cellsize*rows)/2;
 		right = left + cellsize*cols;
