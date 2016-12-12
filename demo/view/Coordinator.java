@@ -165,7 +165,7 @@ public class Coordinator {
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (AppConstant.CellSizeChanged.equals(evt.getPropertyName())) {
 				for (Pack pack : packs) {
-					pack.canvas.updateMatrix();
+					pack.canvas.updateMatrixIfDimensionChanged();
 				}
 			}
 			else if (AppConstant.ClearMapRequested.equals(evt.getPropertyName()) ) {

@@ -4,6 +4,7 @@ package view;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -90,6 +91,19 @@ public class Canvas extends JComponent {
 			break;
 		}
 	}
+	
+	public Dimension calculateDimension(int width, int height, int cellSize) {
+		int rows = (height - MARGIN*2)/cellSize;
+		int cols = (width - MARGIN*2)/cellSize;
+		return new Dimension(rows, cols);
+	}
+	
+	public void updateMatrixIfDimensionChanged() {
+		Dimension dimension = calculateDimension(getWidth(), getHeight(), parameters.getCellSize());
+		if (dimension.getWidth() != matrix.getRows() || dimension.getHeight() != matrix.getColumns()) {
+			updateMatrix();
+		}
+	}
 
 	public void updateMatrix() {
 		int panelWidth = getWidth();
@@ -97,6 +111,7 @@ public class Canvas extends JComponent {
 		int cellsize = parameters.getCellSize();
 		int rows = (panelHeight - MARGIN*2)/cellsize;
 		int cols = (panelWidth - MARGIN*2)/cellsize;
+		if (rows == matrix.getRows() && cols == matrix.getColumns()) return;
 		left = (panelWidth - cellsize*cols)/2;
 		top = (panelHeight - cellsize*rows)/2;
 		right = left + cellsize*cols;
@@ -154,7 +169,7 @@ public class Canvas extends JComponent {
 
 		@Override
 		public void componentResized(ComponentEvent aEvent) {
-			updateMatrix();
+			updateMatrixIfDimensionChanged();
 		}
 
 	};
