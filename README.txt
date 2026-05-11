@@ -9,3 +9,6 @@ the path A* finds may not always be the optimal one.
 
 A Java/Swing graphical demo program is provided to animate the progress of
 path searching, and the two resulted paths side by side for comparison.
+
+# Build jar file: mvn package
+# Run jar file: java -jar target/pathfinder-1.0.jar
