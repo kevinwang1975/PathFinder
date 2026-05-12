@@ -244,6 +244,9 @@ public class ControlPanel extends JPanel {
 				String text = cellSizeTextField.getText();
 				int oldValue = parameters.getCellSize();
 				int newValue = Integer.parseInt(text);
+				if (newValue <= 0) {
+					return;
+				}
 				if (oldValue != newValue) {
 					parameters.setCellSize(newValue);
 					firePropertyChange(AppConstant.CellSizeChanged, oldValue, newValue); 

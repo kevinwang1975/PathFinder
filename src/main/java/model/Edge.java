@@ -59,7 +59,7 @@ public class Edge implements IEdge {
 	 * 
 	 * @param nodeA
 	 */
-	public void setNodeA(Node nodeA) {
+	public void setNodeA(INode nodeA) {
 		this.nodeA = nodeA;
 	}
 
@@ -68,7 +68,7 @@ public class Edge implements IEdge {
 	 * 
 	 * @param nodeB
 	 */
-	public void setNodeB(Node nodeB) {
+	public void setNodeB(INode nodeB) {
 		this.nodeB = nodeB;
 	}
 

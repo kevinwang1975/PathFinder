@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import matrix.AStarCostEvaluator;
 import matrix.MatrixNode;
@@ -78,7 +79,7 @@ public class Coordinator {
 				Runnable runnable = new Runnable() {
 					@Override
 					public void run() {
-						firePropertyChange(canvas, AppConstant.SearchStarted, null, null);
+						SwingUtilities.invokeLater(() -> firePropertyChange(canvas, AppConstant.SearchStarted, null, null));
 						canvas.setEditable(false);
 						evaluator.setEnabled(true);
 						matrix.setStart(matrix.getValue(start.getRow(), start.getCol()));
@@ -87,7 +88,7 @@ public class Coordinator {
 						algorithm.searchPath(matrix.getStart(), matrix.getEnd());
 						canvas.repaint();
 						canvas.setEditable(true);
-						firePropertyChange(canvas, AppConstant.SearchCompleted, null, null);
+						SwingUtilities.invokeLater(() -> firePropertyChange(canvas, AppConstant.SearchCompleted, null, null));
 					}
 				};
 				Thread thread = new Thread(runnable);

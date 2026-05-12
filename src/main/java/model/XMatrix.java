@@ -71,7 +71,6 @@ public class XMatrix extends Matrix<XNode> {
 		if (!node.isEnabled()) {
 			return;
 		}
-		// check 8 neighors
 		int rows = getRows();
 		int cols = getColumns();
 		for (int i = -1; i <= 1; i++) {
@@ -81,45 +80,16 @@ public class XMatrix extends Matrix<XNode> {
 			}
 			for (int j = -1; j <= 1; j++) {
 				int x = col + j;
-				// outside the matrix
 				if (x < 0 || x >=cols) {
 					continue;
 				}
-				// it is the node itself
 				if (y == row && x == col) {
 					continue;
 				}
-				// do not do cross cut
-				if (i == -1 && j == -1) {
-					XNode neighbor1 = getValue(row, col-1);
-					XNode neighbor2 = getValue(row-1, col);
-					if (!neighbor1.isEnabled() && !neighbor2.isEnabled()) {
-						continue;
-					}
-				}
-				if (i == -1 && j == 1) {
-					XNode neighbor1 = getValue(row, col+1);
-					XNode neighbor2 = getValue(row-1, col);
-					if (!neighbor1.isEnabled() && !neighbor2.isEnabled()) {
-						continue;
-					}
-				}
-				if (i == 1 && j == -1) {
-					XNode neighbor1 = getValue(row, col-1);
-					XNode neighbor2 = getValue(row+1, col);
-					if (!neighbor1.isEnabled() && !neighbor2.isEnabled()) {
-						continue;
-					}
-				}
-				if (i == 1 && j == 1) {
-					XNode neighbor1 = getValue(row, col+1);
-					XNode neighbor2 = getValue(row+1, col);
-					if (!neighbor1.isEnabled() && !neighbor2.isEnabled()) {
-						continue;
-					}
+				if (i != 0 && j != 0 && isCrossCutBlocked(row, col, i, j)) {
+					continue;
 				}
 				XNode neighbor = getValue(y, x);
-				// the disabled node
 				if (!neighbor.isEnabled()) {
 					continue;
 				}
@@ -130,6 +100,12 @@ public class XMatrix extends Matrix<XNode> {
 				edge.setWeight(evaluator.evaluateWeight(edge));
 			}
 		}
+	}
+
+	private boolean isCrossCutBlocked(int row, int col, int di, int dj) {
+		XNode n1 = getValue(row, col + dj);
+		XNode n2 = getValue(row + di, col);
+		return !n1.isEnabled() && !n2.isEnabled();
 	}
 
 	public ICostEvaluator getEvaluator() {

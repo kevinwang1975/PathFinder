@@ -89,7 +89,7 @@ public class BinaryHeap<E> {
 	}
 
 	private int indexOf(E e) {
-		for (int i = 0; i < array.length; i++) {
+		for (int i = 1; i <= size; i++) {
 			if (e == array[i]) {
 				return i;
 			}

@@ -5,7 +5,6 @@ public class AppConstant {
 
 	public final static String ModeChanged 				= "Mode Changed";
 
-	public final static String EndNodeChanged 			= "End Node Changed";
 	public final static String NodeOpenStateChanged 	= "Node Open State Changed";
 	public final static String NodeVisitedStateChange	= "Node Visited State Changed";
 	public final static String NodeSelectedStateChanged	= "Node Selected State Changed";

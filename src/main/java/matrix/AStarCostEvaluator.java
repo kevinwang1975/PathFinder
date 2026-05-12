@@ -23,10 +23,10 @@ public class AStarCostEvaluator implements ICostEvaluator {
 		MatrixNode nodeA = (MatrixNode) edge.getNodeA();
 		MatrixNode nodeB = (MatrixNode) edge.getNodeB();
 		if (nodeA.getRow() == nodeB.getRow() || nodeA.getCol() == nodeB.getCol()) {
-			return factor*1;
+			return factor;
 		}
 		else {
-			return (int) (factor*1.4);
+			return factor * 14 / 10;
 		}
 	}
 

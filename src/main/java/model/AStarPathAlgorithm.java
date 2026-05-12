@@ -18,7 +18,9 @@ public class AStarPathAlgorithm implements IPathAlgorithm {
 	private final BinaryHeap<INode> binaryHeap = new BinaryHeap<INode>(new Comparator<INode>() {
 		@Override
 		public int compare(INode o1, INode o2) {
-			return (o1.getCost() + o1.getHeuristic() - (o2.getCost() + o2.getHeuristic()));
+			long f1 = (long) o1.getCost() + (long) o1.getHeuristic();
+			long f2 = (long) o2.getCost() + (long) o2.getHeuristic();
+			return Long.compare(f1, f2);
 		}
 	});
 
@@ -99,11 +101,13 @@ public class AStarPathAlgorithm implements IPathAlgorithm {
 	 */
 	private void markPath(INode start, INode end) {
 		INode node = end;
-		while (node != start) {
+		while (node != null && node != start) {
 			node.setSelected(true);
 			node = node.getPredecessor();
 		}
-		node.setSelected(true);
+		if (node != null) {
+			node.setSelected(true);
+		}
 	}
 
 	public ICostEvaluator getEvaluator() {
