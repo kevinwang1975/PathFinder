@@ -75,7 +75,11 @@ public class BinaryHeap<E> {
 			else {
 				array[index] = array[size];
 				size--;
-				siftDown(index);
+				if (index > 1 && comparator.compare((E)array[index], (E)array[index/2]) < 0) {
+					bubbleUp(index);
+				} else {
+					siftDown(index);
+				}
 			}
 		}
 	}

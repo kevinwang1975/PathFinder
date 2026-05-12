@@ -49,13 +49,12 @@ public class AStarPathAlgorithm implements IPathAlgorithm {
 		while (binaryHeap.size() > 0) {
 			// take the node with the lowest cost, and check the nodes that are connected to it.
 			node = binaryHeap.remove();
+			// pops the end node, the path is optimal
+			if (node == end) {
+				markPath(start, end);
+				return true;
+			}
 			// the node has the lowest cost, close it so it won't be visited again.
-			// even though a node has the lowest cost, it still can be not in the selected path
-			// in the end of the path search:
-			//   - if it has no connection to the destination, or its connection has a higher
-			//     cost so lost the battle in the competition, then it won't be in the selected path
-			//   - if it remains as a link on the chain connecting the origin and the destination,
-			//     then it will be in the selected path
 			node.setOpen(false);
 			Collection<IEdge> edges = node.getEdges();
 			// check the nodes connected by the edges
@@ -86,11 +85,6 @@ public class AStarPathAlgorithm implements IPathAlgorithm {
 					binaryHeap.remove(candidate);
 					binaryHeap.add(candidate);
 				}
-			}
-			// reached the destination, mark the path and stop 
-			if (binaryHeap.contains(end)) {
-				markPath(start, end);
-				return true;
 			}
 		}
 		return false;
