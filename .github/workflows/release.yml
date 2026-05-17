@@ -2,10 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release version (e.g., 1.1)'
-        required: true
 
 jobs:
   release:
@@ -15,10 +11,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get version from pom.xml
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Check if tag already exists
         run: |
-          if git rev-parse "v${{ inputs.version }}" >/dev/null 2>&1; then
-            echo "::error::Tag v${{ inputs.version }} already exists. Aborting."
+          if git rev-parse "v${{ env.VERSION }}" >/dev/null 2>&1; then
+            echo "::error::Tag v${{ env.VERSION }} already exists. Aborting."
             exit 1
           fi
 
@@ -26,8 +27,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view "v${{ inputs.version }}" >/dev/null 2>&1; then
-            echo "::error::Release v${{ inputs.version }} already exists. Aborting."
+          if gh release view "v${{ env.VERSION }}" >/dev/null 2>&1; then
+            echo "::error::Release v${{ env.VERSION }} already exists. Aborting."
             exit 1
           fi
 
@@ -41,16 +42,15 @@ jobs:
 
       - name: Create and push tag
         run: |
-          git tag "v${{ inputs.version }}"
-          git push origin "v${{ inputs.version }}"
+          git tag "v${{ env.VERSION }}"
+          git push origin "v${{ env.VERSION }}"
 
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          VERSION="${{ inputs.version }}"
-          gh release create "v$VERSION" \
+          gh release create "v${{ env.VERSION }}" \
             target/pathfinder-1.0.jar \
-            --title "v$VERSION" \
+            --title "v${{ env.VERSION }}" \
             --generate-notes \
             --target "${{ github.ref_name }}"
