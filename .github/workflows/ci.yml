@@ -12,18 +12,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [8, 11]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          java-version: ${{ matrix.java }}
+          java-version: 8
           distribution: temurin
           cache: maven
       - run: mvn -B package
       - uses: actions/upload-artifact@v4
         with:
-          name: pathfinder-java${{ matrix.java }}
+          name: pathfinder-java8
           path: target/pathfinder-1.0.jar
