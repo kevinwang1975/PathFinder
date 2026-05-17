@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from pom.xml
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Check if tag already exists
+        run: |
+          if git rev-parse "v${{ env.VERSION }}" >/dev/null 2>&1; then
+            echo "::error::Tag v${{ env.VERSION }} already exists. Aborting."
+            exit 1
+          fi
+
+      - name: Check if release already exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v${{ env.VERSION }}" >/dev/null 2>&1; then
+            echo "::error::Release v${{ env.VERSION }} already exists. Aborting."
+            exit 1
+          fi
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: temurin
+          cache: maven
+
+      - run: mvn -B package
+
+      - name: Create and push tag
+        run: |
+          git tag "v${{ env.VERSION }}"
+          git push origin "v${{ env.VERSION }}"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ env.VERSION }}" \
+            target/pathfinder-1.0.jar \
+            --title "v${{ env.VERSION }}" \
+            --generate-notes \
+            --target "${{ github.ref_name }}"
